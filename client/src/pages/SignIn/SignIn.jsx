@@ -13,9 +13,7 @@ const handleSubmit =(e) =>{
     axios.post("http://localhost:3000",{email,password})
     .then(result =>{
         console.log(result)
-
-
-        if(result.data === "success"){
+         if(result.data === "success"){
          
             navigate('/home')
 
