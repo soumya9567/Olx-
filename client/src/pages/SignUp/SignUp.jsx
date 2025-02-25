@@ -10,18 +10,24 @@ function SignUp() {
     const navigate = useNavigate()
 
 
-    const handleSubmit = (e) =>{
-      e.preventDefault()
-
-      axios.post('http://localhost:3000/signup',{name,email,password})
-      .then(result => {console.log(result)
-
-        navigate('/')
-      })
-      .catch(err => console.log(err))
-    
-    }
-
+    const handleSubmit = (e) => {
+      e.preventDefault();
+  
+      axios.post('http://localhost:3000/signup', { name, email, password })
+          .then(result => {
+              console.log(result);
+              navigate('/');
+          })
+          .catch(err => {
+              // Log the error message from the backend
+              if (err.response) {
+                  console.log('Error response:', err.response.data);
+              } else {
+                  console.log('Error message:', err.message);
+              }
+          });
+  };
+  
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
