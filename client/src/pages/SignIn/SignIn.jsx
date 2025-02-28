@@ -4,27 +4,28 @@ import { Link, useNavigate } from 'react-router-dom'
 
 function SignIn() {
 
-const [email,setEmail] = useState()
-const [password,setPassword] = useState()
-const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-const handleSubmit =(e) =>{
-    e.preventDefault()
-    axios.post("http://localhost:3000",{email,password})
-    .then(result =>{
-        console.log(result)
-         if(result.data === "success"){
-         
-            navigate('/home')
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios.post("http://localhost:3000", { email, password })
+      .then((result) => {
+        console.log(result);
+        if (result.data.message === "Success") {
+          navigate("/home");  // Navigate to home page on success
+        } else {
+          alert("Login failed. Check your credentials.");
         }
-        
+      })
+      .catch((err) => {
+        console.error("Login error:", err);
+        alert("An error occurred while logging in.");
+      });
+  };
 
-    })
-    .catch(err =>{
-        console.log(err)
-    })
-}
+   
 
 
   return (

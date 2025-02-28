@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const ProductListingForm = () => {
+const ProductListingForm = ({ onAddProduct }) => {
+  const navigate = useNavigate();
   const [product, setProduct] = useState({
-    title: '',
-    description: '',
-    price: '',
-    location: '',
+    title: "",
+    description: "",
+    price: "",
+    location: "",
     image: null,
-    imagePreview: null,  // Adding imagePreview to store the image URL for display
+    imagePreview: null,
   });
 
   const handleInputChange = (e) => {
@@ -18,22 +20,15 @@ const ProductListingForm = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const imagePreview = URL.createObjectURL(file); 
+      const imagePreview = URL.createObjectURL(file);
       setProduct({ ...product, image: file, imagePreview });
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Product posted:', product);
-    setProduct({
-      title: '',
-      description: '',
-      price: '',
-      location: '',
-      image: null,
-      imagePreview: null,
-    });
+    onAddProduct(product);
+    navigate("/home"); // Redirect to homepage
   };
 
   return (
@@ -44,83 +39,13 @@ const ProductListingForm = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Title:</label>
-            <input
-              type="text"
-              name="title"
-              value={product.title}
-              onChange={handleInputChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter product title"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Description:</label>
-            <textarea
-              name="description"
-              value={product.description}
-              onChange={handleInputChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter product description"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Price:</label>
-            <input
-              type="number"
-              name="price"
-              value={product.price}
-              onChange={handleInputChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter product price"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Location:</label>
-            <input
-              type="text"
-              name="location"
-              value={product.location}
-              onChange={handleInputChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter product location"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Upload Image:</label>
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {product.imagePreview && (
-              <div className="mt-4">
-                <img
-                  src={product.imagePreview}
-                  alt="Image Preview"
-                  className="w-full h-auto rounded-md"
-                />
-              </div>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-200"
-          >
-            Post Product
-          </button>
+          <input type="text" name="title" placeholder="Title" value={product.title} onChange={handleInputChange} className="w-full p-3 border rounded" required />
+          <textarea name="description" placeholder="Description" value={product.description} onChange={handleInputChange} className="w-full p-3 border rounded" required />
+          <input type="number" name="price" placeholder="Price" value={product.price} onChange={handleInputChange} className="w-full p-3 border rounded" required />
+          <input type="text" name="location" placeholder="Location" value={product.location} onChange={handleInputChange} className="w-full p-3 border rounded" required />
+          <input type="file" name="image" accept="image/*" onChange={handleImageChange} className="w-full p-3 border rounded" />
+          {product.imagePreview && <img src={product.imagePreview} alt="Preview" className="w-full h-32 object-cover rounded-md" />}
+          <button type="submit" className="w-full p-3 bg-blue-500 text-white rounded hover:bg-blue-600">Post Product</button>
         </form>
       </div>
     </div>
