@@ -7,6 +7,7 @@ const ProductListingForm = () => {
     price: '',
     location: '',
     image: null,
+    imagePreview: null,  // Adding imagePreview to store the image URL for display
   });
 
   const handleInputChange = (e) => {
@@ -16,20 +17,22 @@ const ProductListingForm = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setProduct({ ...product, image: file });
+    if (file) {
+      const imagePreview = URL.createObjectURL(file); 
+      setProduct({ ...product, image: file, imagePreview });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here, you can handle posting the product details to a server
     console.log('Product posted:', product);
-    // Reset the form
     setProduct({
       title: '',
       description: '',
       price: '',
       location: '',
       image: null,
+      imagePreview: null,
     });
   };
 
@@ -101,6 +104,15 @@ const ProductListingForm = () => {
               onChange={handleImageChange}
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {product.imagePreview && (
+              <div className="mt-4">
+                <img
+                  src={product.imagePreview}
+                  alt="Image Preview"
+                  className="w-full h-auto rounded-md"
+                />
+              </div>
+            )}
           </div>
 
           <button
