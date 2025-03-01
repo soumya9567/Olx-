@@ -28,7 +28,7 @@ const ProductListingForm = ({ onAddProduct }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onAddProduct(product);
-    navigate("/home"); // Redirect to homepage
+    navigate("/home"); 
   };
 
   return (

@@ -2,7 +2,6 @@ import Product from "../models/productModel.js";
 import multer from "multer";
 import path from "path";
 
-// Configure Multer for file uploads
 const storage = multer.diskStorage({
   destination: "./uploads/",
   filename: (req, file, cb) => {
