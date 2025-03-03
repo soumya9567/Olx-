@@ -1,17 +1,39 @@
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
 import Header from "../../Components/Header/Header";
 
-function Home({ products }) {
+function Home() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/products")
+      .then((response) => setProducts(response.data))
+      .catch((error) => console.error("Error fetching products:", error));
+  }, []);
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-<Header />
-      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <Header />
+
+      <div className="flex justify-end mb-6">
+      
+      </div>
+
+      {/* Product Listing */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {products.length === 0 ? (
-          <p className="text-center text-gray-500">No products posted yet.</p>
+          <p className="text-center text-gray-500 col-span-full">No products posted yet.</p>
         ) : (
-          products.map((product, index) => (
-            <div key={index} className="bg-white p-4 rounded-lg shadow-md">
-              {product.imagePreview && (
-                <img src={product.imagePreview} alt="Product" className="w-full h-40 object-cover rounded-md" />
+          products.map((product) => (
+            <div key={product._id} className="bg-white p-4 rounded-lg shadow-md">
+              {product.image && (
+                <img
+                src={`http://localhost:3000${product.image}`} 
+                alt={product.title}
+                className="w-full h-40 object-cover  rounded-md"
+              />
+              
               )}
               <h2 className="text-xl font-bold mt-2">{product.title}</h2>
               <p className="text-gray-700">{product.description}</p>
@@ -23,6 +45,6 @@ function Home({ products }) {
       </div>
     </div>
   );
-};
+}
 
 export default Home;

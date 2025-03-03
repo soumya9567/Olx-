@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const ProductListingForm = ({ onAddProduct }) => {
+const ProductListingForm = () => {
   const navigate = useNavigate();
   const [product, setProduct] = useState({
     title: "",
     description: "",
     price: "",
     location: "",
-    image: null,
-    imagePreview: null,
+    image: "",
+    imagePreview: "",
   });
 
   const handleInputChange = (e) => {
@@ -25,10 +26,31 @@ const ProductListingForm = ({ onAddProduct }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onAddProduct(product);
-    navigate("/home"); 
+
+    const formData = new FormData();
+    formData.append("title", product.title);
+    formData.append("description", product.description);
+    formData.append("price", product.price);
+    formData.append("location", product.location);
+    if (product.image) {
+      formData.append("image", product.image);
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3000/productpost", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (response.status === 201) {
+        alert("Product posted successfully!");
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("Error posting product:", error);
+      alert("Failed to post product.");
+    }
   };
 
   return (

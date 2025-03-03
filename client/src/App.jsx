@@ -4,6 +4,7 @@ import SignUp from './pages/SignUp/SignUp.jsx'
 import SignIn from './pages/SignIn/SignIn.jsx'
 import Home from './pages/Home/Home.jsx'
 import ProductListingForm from './pages/ProductLIstForm/ProductListForm.jsx'
+import PostProduct from './pages/PostProduct/PostProduct.jsx'
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -18,6 +19,9 @@ function App() {
     <Route  path='/' element={<SignIn />}></Route>
     <Route path="/home" element={<Home products={products} />} />
       <Route path="/productpost" element={<ProductListingForm onAddProduct={handleAddProduct} />} />
+      <Route path="/postproduct" element={<PostProduct products={products} />} />
+
+
 
 
 

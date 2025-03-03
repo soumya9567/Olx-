@@ -15,6 +15,7 @@ export const postProduct = async (req, res) => {
   try {
     const { title, description, price, location } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
+    console.log(req.body)
 
     const newProduct = new Product({ title, description, price, location, image });
     await newProduct.save();
