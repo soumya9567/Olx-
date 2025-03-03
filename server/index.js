@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import { signup, login } from "./controller/authController.js";
-import { postProduct, getProducts, upload } from "./controller/productController.js";
+import { postProduct, getProducts, upload, productdetails } from "./controller/productController.js";
 
 const app = express();
 app.use(express.json());
@@ -21,6 +21,7 @@ app.post("/", login);
 app.post("/home")
 app.post("/productpost", upload.single("image"), postProduct);
 app.get("/products", getProducts);
+app.get("/products/:id",productdetails)
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
