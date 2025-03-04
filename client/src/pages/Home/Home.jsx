@@ -32,13 +32,13 @@ function Home() {
     <div className="p-6 bg-gray-100 min-h-screen">
       <Header />
 
-      <div className="grid pt-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <div className="grid pt-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3  ">
         {products.length === 0 ? (
           <p className="text-center text-gray-500 col-span-full">No products posted yet.</p>
         ) : (
           products.map((product) => (
             <Link to={`/productdetails/${product._id}`}>
-              <div className="bg-white p-4 rounded-lg shadow-md relative">
+              <div className="bg-white p-4 w-full max-w-80 rounded-lg shadow-md relative">
           
                 <div className="relative">
                   {product.image && (

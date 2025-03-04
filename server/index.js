@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { signup, login } from "./controller/authController.js";
 import { postProduct, getProducts, upload, productdetails } from "./controller/productController.js";
+import nodemailer from "nodemailer"
+import dotenv from "dotenv"
 
 const app = express();
 app.use(express.json());
@@ -14,6 +16,16 @@ mongoose
   .connect("mongodb+srv://soumyasathyansathyan:soumya1917@cluster0.tzwip.mongodb.net/OLX")
   .then(() => console.log("Database connected successfully"))
   .catch((err) => console.error("Database connection error:", err));
+
+dotenv.config(); 
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 
 app.post("/signup", signup);
