@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.png"
 import search from "../../assets/images/search.png"
+import { Heart } from "lucide-react";
 
 
 
@@ -47,6 +48,12 @@ const Header = () => {
           </button>
         </div>
       </div>
+     
+
+        <Link to={"/wishlist"}> <div>
+          <h1>view wishlist</h1>
+         </div></Link>
+
 
       <div className="flex items-center space-x-6">
         <Link to="/">
