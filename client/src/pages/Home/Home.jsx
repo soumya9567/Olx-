@@ -6,65 +6,77 @@ import { Heart } from "lucide-react";
 
 function Home() {
   const [products, setProducts] = useState([]);
+  const [sortedProducts, setSortedProducts] = useState([]);
+  const [sortOrder, setSortOrder] = useState("default");
   const [likedProducts, setLikedProducts] = useState({});
-  const [date, setDate] = useState("");
-
-  const userId = " "; 
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    setDate(new Date().toLocaleDateString());
+    axios
+      .get("http://localhost:3000/auth/user", { withCredentials: true })
+      .then((response) => setUserId(response.data.userId))
+      .catch(() => setUserId(null));
 
-   
     axios
       .get("http://localhost:3000/products")
-      .then((response) => setProducts(response.data))
+      .then((response) => {
+        setProducts(response.data);
+        setSortedProducts(response.data);
+      })
       .catch((error) => console.error("Error fetching products:", error));
+  }, []);
 
-    
+  useEffect(() => {
+    if (!userId) return;
+
     axios
       .get(`http://localhost:3000/wishlist/${userId}`)
       .then((response) => {
         const wishlistMap = {};
-        response.data.forEach((product) => {
-          wishlistMap[product._id] = true;
+        response.data.forEach((item) => {
+          wishlistMap[item.productId._id] = true;
         });
         setLikedProducts(wishlistMap);
       })
       .catch((error) => console.error("Error fetching wishlist:", error));
-  }, []);
+  }, [userId]);
 
-  const toggleLike = async (productId) => {
-    try {
-      if (likedProducts[productId]) {
-     
-        await axios.delete(`http://localhost:3000/wishlist/${userId}/${productId}`);
-        setLikedProducts((prev) => {
-          const updatedLikes = { ...prev };
-          delete updatedLikes[productId];
-          return updatedLikes;
-        });
-      } else {
-      
-        await axios.post("http://localhost:3000/wishlist", { userId, productId });
-        setLikedProducts((prev) => ({
-          ...prev,
-          [productId]: true,
-        }));
-      }
-    } catch (error) {
-      console.error("Error updating wishlist:", error);
+  const handleSortChange = (e) => {
+    const order = e.target.value;
+    setSortOrder(order);
+
+    let sorted = [...products];
+
+    if (order === "low-to-high") {
+      sorted.sort((a, b) => a.price - b.price);
+    } else if (order === "high-to-low") {
+      sorted.sort((a, b) => b.price - a.price);
     }
+
+    setSortedProducts(sorted);
   };
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <Header />
 
+      <div className="flex justify-end mb-4 pt-12">
+        <select
+          value={sortOrder}
+          onChange={handleSortChange}
+          className="p-2 border rounded-md bg-white shadow-md"
+        >
+          <option value="default">Sort by</option>
+          <option value="low-to-high">Price: Low to High</option>
+          <option value="high-to-low">Price: High to Low</option>
+        </select>
+      </div>
+
       <div className="grid pt-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {products.length === 0 ? (
+        {sortedProducts.length === 0 ? (
           <p className="text-center text-gray-500 col-span-full">No products posted yet.</p>
         ) : (
-          products.map((product) => (
+          sortedProducts.map((product) => (
             <div key={product._id} className="bg-white p-4 w-full max-w-80 rounded-lg shadow-md relative">
               <Link to={`/productdetails/${product._id}`}>
                 {product.image && (
@@ -91,7 +103,6 @@ function Home() {
               <p className="text-gray-700">{product.description}</p>
               <p className="text-blue-600 font-semibold mt-1">₹{product.price}</p>
               <p className="text-gray-500 text-sm">{product.location}</p>
-              <p className="text-gray-500 text-sm">{date}</p>
             </div>
           ))
         )}

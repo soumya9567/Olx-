@@ -6,8 +6,8 @@ import otpModel from "../models/otpModel.js";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "soumyasou9567@gmail.com",
-    pass: "oigw pagy izlg tdpy", 
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, 
   },
 });
 
@@ -28,7 +28,7 @@ export const signup = async (req, res) => {
     await otpModel.create({ email, otp, createdAt: new Date() });
 
     await transporter.sendMail({
-      from: "soumyasou9567@gmail.com",
+      from: "process.env.EMAIL_USER",
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP is: ${otp}`,

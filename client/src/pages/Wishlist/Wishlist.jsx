@@ -6,15 +6,16 @@ import { Heart } from "lucide-react";
 
 function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
-  const userId = " "; 
+  const userId = localStorage.getItem("userId"); // Get user ID from authentication
 
   useEffect(() => {
+    if (!userId) return;
+
     axios
       .get(`http://localhost:3000/wishlist/${userId}`)
       .then((response) => setWishlist(response.data))
       .catch((error) => console.error("Error fetching wishlist:", error));
-  }, []);
-  
+  }, [userId]);
 
   const removeFromWishlist = async (productId) => {
     try {

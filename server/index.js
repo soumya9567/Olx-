@@ -27,9 +27,9 @@ app.post("/productpost", upload.single("image"), postProduct);
 app.get("/products", getProducts);
 app.get("/products/:id", productdetails);
 
-app.post("/wishlist", addToWishlist);             // Add to wishlist
-app.get("/wishlist/:userId", getWishlist);        // Get user's wishlist
-app.delete("/wishlist/:userId/:productId", removeFromWishlist);      // Remove from wishlist
+app.post("/", addToWishlist); 
+app.delete("/:userId/:productId", removeFromWishlist); 
+app.get("/:userId", getWishlist);    
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
