@@ -1,8 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import { signup, login,verifySignup } from "./controller/authController.js";
+import dotenv from "dotenv";
+dotenv.config(); 
+
+import { signup, login, verifySignup } from "./controller/authController.js";
 import { postProduct, getProducts, upload, productdetails } from "./controller/productController.js";
+import { addToWishlist, getWishlist, removeFromWishlist } from "./controller/wishlistController.js";
 
 const app = express();
 app.use(express.json());
@@ -11,20 +15,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("uploads")); 
 
 mongoose
-  .connect("mongodb+srv://soumyasathyansathyan:soumya1917@cluster0.tzwip.mongodb.net/OLX")
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("Database connected successfully"))
   .catch((err) => console.error("Database connection error:", err));
-
 
 app.post("/signup", signup);
 app.post("/verify-signup", verifySignup);
 app.post("/", login);
-app.post("/home")
+
 app.post("/productpost", upload.single("image"), postProduct);
 app.get("/products", getProducts);
-app.get("/products/:id",productdetails)
+app.get("/products/:id", productdetails);
 
+app.post("/wishlist", addToWishlist);             // Add to wishlist
+app.get("/wishlist/:userId", getWishlist);        // Get user's wishlist
+app.delete("/wishlist/:userId/:productId", removeFromWishlist);      // Remove from wishlist
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
