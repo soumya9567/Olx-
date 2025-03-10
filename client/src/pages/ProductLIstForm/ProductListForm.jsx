@@ -39,7 +39,7 @@ const ProductListingForm = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/productpost", formData, {
+      const response = await axios.post("http://localhost:3000/products/post", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

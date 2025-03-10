@@ -13,7 +13,7 @@ function SignUp() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/signup', { name, email, password });
+      const response = await axios.post('http://localhost:3000/auth/signup', { name, email, password });
       console.log(response.data);
       setStep(2);
     } catch (err) {
@@ -24,7 +24,7 @@ function SignUp() {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/verify-signup', { email, otp, password,name });
+      const response = await axios.post('http://localhost:3000/auth/verifySignup', { email, otp, password,name });
       console.log(response.data);
       navigate('/');
     } catch (err) {
@@ -67,7 +67,7 @@ function SignUp() {
           </>
         )}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">Already have an account? <Link to="/" className="text-blue-500 hover:underline">Sign In</Link></p>
+          <p className="text-sm text-gray-600">Already have an account? <Link to="/auth/login" className="text-blue-500 hover:underline">Sign In</Link></p>
         </div>
       </div>
     </div>

@@ -1,35 +1,38 @@
 import express from "express";
 import mongoose from "mongoose";
+import session from "express-session";
 import cors from "cors";
 import dotenv from "dotenv";
-dotenv.config(); 
+dotenv.config();
 
-import { signup, login, verifySignup } from "./controller/authController.js";
-import { postProduct, getProducts, upload, productdetails } from "./controller/productController.js";
-import { addToWishlist, getWishlist, removeFromWishlist } from "./controller/wishlistController.js";
+import authRoute from "./routes/authRoute.js";
 
 const app = express();
+
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 app.use(express.urlencoded({ extended: true }));
-app.use("/uploads", express.static("uploads")); 
+app.use("/uploads", express.static("uploads"));
+
+
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, httpOnly: true },
+  })
+);
 
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("Database connected successfully"))
   .catch((err) => console.error("Database connection error:", err));
 
-app.post("/signup", signup);
-app.post("/verify-signup", verifySignup);
-app.post("/", login);
-
-app.post("/productpost", upload.single("image"), postProduct);
-app.get("/products", getProducts);
-app.get("/products/:id", productdetails);
-
-app.post("/", addToWishlist); 
-app.delete("/:userId/:productId", removeFromWishlist); 
-app.get("/:userId", getWishlist);    
+app.use("/", authRoute);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -3,6 +3,14 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Header from "../../Components/Header/Header";
 import { Heart } from "lucide-react";
+import Banner from "../../Components/Banner/Banner";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import image1 from "../../assets/images/image1.png"
+import image2 from "../../assets/images/image2.png"
+import image3 from "../../assets/images/image3.png"
+import image4 from "../../assets/images/image5.png"
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -10,13 +18,49 @@ function Home() {
   const [sortOrder, setSortOrder] = useState("default");
   const [likedProducts, setLikedProducts] = useState({});
   const [userId, setUserId] = useState(null);
+  const carouselImages = [
+  image1,image2,image3,image4
+  ];
+  
+  const carouselSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1, 
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+  };
+  const toggleLike = async (productId) => {
+    if (!userId) {
+      alert("Please log in to use the wishlist feature.");
+      return;
+    }
+  
+    try {
+      if (likedProducts[productId]) {
+        await axios.delete(`http://localhost:3000/wishlist/${userId}/${productId}`);
+        setLikedProducts((prev) => ({ ...prev, [productId]: false }));
+      } else {
+        await axios.post("http://localhost:3000/wishlist", { userId, productId });
+        setLikedProducts((prev) => ({ ...prev, [productId]: true }));
+      }
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+    }
+  };
+  
 
   useEffect(() => {
     axios
       .get("http://localhost:3000/auth/user", { withCredentials: true })
-      .then((response) => setUserId(response.data.userId))
-      .catch(() => setUserId(null));
-
+      .then((response) => {
+        setUserId(response.data.userId);
+      })
+      .catch(() => {
+        setUserId(null);
+      });
+  
     axios
       .get("http://localhost:3000/products")
       .then((response) => {
@@ -25,7 +69,7 @@ function Home() {
       })
       .catch((error) => console.error("Error fetching products:", error));
   }, []);
-
+  
   useEffect(() => {
     if (!userId) return;
 
@@ -59,8 +103,10 @@ function Home() {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <Header />
+      <Banner />
 
-      <div className="flex justify-end mb-4 pt-12">
+      <div className="mt-8">
+      <div className="flex justify-end -mt-16 mb-4 pt-12">
         <select
           value={sortOrder}
           onChange={handleSortChange}
@@ -71,6 +117,22 @@ function Home() {
           <option value="high-to-low">Price: High to Low</option>
         </select>
       </div>
+        <h2 className="text-2xl font-bold text-center mb-4">Fresh recommendations</h2>
+        <Slider {...carouselSettings}>
+          {carouselImages.map((imgSrc, index) => (
+            <div key={index} className="p-4">
+              <img
+                src={imgSrc}
+                alt={`Slide ${index + 1}`}
+                className="w-full h-64 object-cover rounded-lg shadow-lg"
+              />
+            </div>
+          ))}
+        </Slider>
+      </div>
+
+
+     
 
       <div className="grid pt-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {sortedProducts.length === 0 ? (

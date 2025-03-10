@@ -10,7 +10,7 @@ function SignIn() {
     e.preventDefault();
   
     try {
-      const response = await axios.post("http://localhost:3000", { email, password });
+      const response = await axios.post("http://localhost:3000/auth/login", { email, password });
   
       console.log("Login Response:", response.data);
   
