@@ -7,6 +7,7 @@ import ProductListingForm from './pages/ProductLIstForm/ProductListForm.jsx'
 import PostProduct from './pages/ProductDetails/ProductDetails.jsx'
 import ProductDetails from './pages/ProductDetails/ProductDetails.jsx'
 import Wishlist from './pages/Wishlist/Wishlist.jsx'
+import PostPage from './pages/PostPage/PostPage.jsx'
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -23,6 +24,8 @@ function App() {
       <Route path="/productpost" element={<ProductListingForm onAddProduct={handleAddProduct} />} />
       <Route path="/productdetails/:id" element={<ProductDetails />} />
       <Route path="/wishlist" element={<Wishlist />} />
+      <Route path="/postpage" element={<PostPage/>} />
+
 
 
 

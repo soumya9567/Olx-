@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import userModel from "../models/userModel.js";
+import User from "../models/userModel.js";
 import otpModel from "../models/otpModel.js";
 
 dotenv.config(); 
@@ -25,7 +25,7 @@ export const signup = async (req, res) => {
   try {
     const { email, name, password } = req.body;
 
-    const existingUser = await userModel.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -61,7 +61,7 @@ export const verifySignup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await userModel.create({ name, email, password: hashedPassword });
+    const newUser = await User.create({ name, email, password: hashedPassword });
 
     await otpModel.deleteMany({ email });
 
@@ -75,7 +75,7 @@ export const verifySignup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await userModel.findOne({ email });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

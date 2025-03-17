@@ -3,13 +3,21 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Header from "../../Components/Header/Header";
 import { Heart } from "lucide-react";
+import { useSelector } from "react-redux";
 
 function Wishlist() {
   const [wishlist, setWishlist] = useState([]);
-  const userId = localStorage.getItem("userId"); // Get user ID from authentication
 
+  // Get user from Redux store
+  const { user } = useSelector((state) => state.auth);
+  const userId = user?.user?._id; // Corrected way to get user ID
+
+  console.log(user, "userrrr from wishlist");
+  console.log(userId, "User ID from wishlist");
+
+  // Fetch wishlist items
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) return; // Prevent API call if user is not logged in
 
     axios
       .get(`http://localhost:3000/wishlist/${userId}`)
@@ -17,7 +25,10 @@ function Wishlist() {
       .catch((error) => console.error("Error fetching wishlist:", error));
   }, [userId]);
 
+  // Remove product from wishlist
   const removeFromWishlist = async (productId) => {
+    if (!userId) return; // Ensure userId exists before making the request
+
     try {
       await axios.delete(`http://localhost:3000/wishlist/${userId}/${productId}`);
       setWishlist((prev) => prev.filter((product) => product._id !== productId));
@@ -30,12 +41,18 @@ function Wishlist() {
     <div className="p-6 bg-gray-100 min-h-screen">
       <Header />
       <h1 className="text-2xl font-bold text-center my-4">My Wishlist</h1>
+
       <div className="grid pt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {wishlist.length === 0 ? (
-          <p className="text-center text-gray-500 col-span-full">Your wishlist is empty.</p>
+          <p className="text-center text-gray-500 col-span-full">
+            Your wishlist is empty.
+          </p>
         ) : (
           wishlist.map((product) => (
-            <div key={product._id} className="bg-white p-4 w-full max-w-80 rounded-lg shadow-md relative">
+            <div
+              key={product._id}
+              className="bg-white p-4 w-full max-w-80 rounded-lg shadow-md relative"
+            >
               <Link to={`/productdetails/${product._id}`}>
                 {product.image && (
                   <img

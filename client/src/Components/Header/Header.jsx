@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.png";
 import searchIcon from "../../assets/images/search.png";
-import { Heart } from "lucide-react";
+import { Heart, User } from "lucide-react";
 import axios from "axios";
 
 const Header = () => {
@@ -11,6 +11,7 @@ const Header = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
 
   const handleLogout = () => {
     setIsAuthenticated(false);
@@ -40,8 +41,7 @@ const Header = () => {
   }, [searchQuery, products]);
 
   return (
-    <nav className="bg-gray-100 p-4 flex items-center justify-between shadow-md">
-    
+    <nav className="bg-gray-100 p-4 flex items-center justify-between shadow-md relative">
       <Link to="/" className="flex items-center">
         <img src={logo} alt="Logo" className="w-20" />
       </Link>
@@ -57,7 +57,6 @@ const Header = () => {
         />
       </div>
 
-      {/* 🔹 Search Bar */}
       <div className="relative flex items-center w-1/2">
         <input
           type="text"
@@ -76,23 +75,33 @@ const Header = () => {
         <h1 className="font-semibold text-gray-800">Wishlist</h1>
       </Link>
 
+      {/* Account Icon with Dropdown */}
+      <div className="relative">
+        <button onClick={() => setShowAccountMenu(!showAccountMenu)} className="text-gray-800 cursor-pointer">
+          <User />
+        </button>
+        {showAccountMenu && (
+          <div 
+            className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md py-2"
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+          >
+            <Link to="/account" className="block px-4 py-2 hover:bg-gray-200">Account Details</Link>
+            <Link to="/postpage" className="block px-4 py-2 hover:bg-gray-200">Post</Link>
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link to="/" className="block px-4 py-2 hover:bg-gray-200">Login</Link>
+            )}
+          </div>
+        )}
+      </div>
+
       <div className="flex items-center space-x-6">
-      <div>
-      {isAuthenticated ? (
-        <h6
-          onClick={handleLogout}
-          className="underline font-bold cursor-pointer text-lg"
-        >
-          Logout
-        </h6>
-      ) : (
-        <Link to="/">
-          <h6 className="underline font-bold cursor-pointer text-lg">Login</h6>
-        </Link>
-      )}
-    </div>
-
-
         <Link to="/productpost">
           <button className="flex items-center space-x-2 px-5 py-2 border-4 rounded-full shadow-md font-bold text-lg text-gray-800 border-blue-500 border-t-[#23e5db] border-r-[#ffce32]">
             + <span>SELL</span>

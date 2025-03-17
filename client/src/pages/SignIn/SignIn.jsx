@@ -1,39 +1,35 @@
-import axios from 'axios';
-import React, { useState } from 'react';
+/* eslint-disable react/no-unescaped-entities */
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { signInUser } from '../../store/authSlice';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { loading,user } = useSelector((state) => state.auth);
+  console.log(user,"login userrrrrrr")
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    try {
-      const response = await axios.post("http://localhost:3000/auth/login", { email, password });
-  
-      console.log("Login Response:", response.data);
-  
-      if (response.data.message === "Login successful") {
-        alert("Login successful!");
-        navigate("/home");  
-      } else {
-        alert("Login failed. Check your credentials.");
-      }
-    } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
-      alert("Invalid email or password.");
+    const result = await dispatch(signInUser({ email, password }));
+
+    if (result.meta.requestStatus === "fulfilled") {
+      toast.success("Login successful!", { autoClose: 2000 }); 
+      navigate("/home");
+    } else {
+      toast.error("Login failed. Check your credentials.", { autoClose: 3000 });
     }
   };
-  
-
-   
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Sign In</h2>
-
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700 text-sm font-medium mb-2">
@@ -68,8 +64,9 @@ function SignIn() {
           <button
             type="submit"
             className="w-full p-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading}
           >
-            Sign In
+            {loading ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
@@ -82,6 +79,7 @@ function SignIn() {
           </p>
         </div>
       </div>
+      <ToastContainer position="top-right" />
     </div>
   );
 }

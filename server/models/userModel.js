@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
         name: { type: String },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
+        wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }] 
       },
     
       {
@@ -14,5 +15,5 @@ const userSchema = new mongoose.Schema(
       }
 )
 
-const userModel = mongoose.model("user",userSchema)
-export default userModel
+const User = mongoose.model("user",userSchema)
+export default User
