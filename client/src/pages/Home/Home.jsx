@@ -5,21 +5,19 @@ import { useSelector, useDispatch } from "react-redux";
 import Header from "../../Components/Header/Header";
 import { Heart } from "lucide-react";
 import Banner from "../../Components/Banner/Banner";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { fetchProducts } from "../../store/productSlice";
 
 function Home() {
   const dispatch = useDispatch();
-  
-  // Access products and user from Redux
-  const { items: products } = useSelector((state) => state.products);
+
+  const { items: products = [] } = useSelector((state) => state.products); // Ensure products is always an array
   const { user } = useSelector((state) => state.auth);
   const userId = user?.user?._id; 
-  const productIds = products.map(product => product._id);
-    console.log(products,"ppppppppppppproduct")
-  console.log(productIds,"ppppppppppppproductiiiid")// Extract userId from Redux auth state
+
+  const productIds = products.length ? products.map((product) => product._id) : [];
+  
+  console.log(products, "Fetched Products");
+  console.log(productIds, "Product IDs");
 
   const [likedProducts, setLikedProducts] = useState({});
 
@@ -27,34 +25,36 @@ function Home() {
     dispatch(fetchProducts()); 
   }, [dispatch]);
 
-  // Toggle Wishlist
-  const toggleLike = async (productIds) => {
-    if (!userId) {
+  // Toggle Wishlist Function
+  const toggleLike = async (productId) => {
+    if (!userId) {             
       console.log("User not logged in");
       return;
     }
-  
+
+    if (!productId) {
+      console.error("Invalid productId:", productId);
+      return;
+    }
+
+    console.log("Sending to backend:", { userId, productId });
+
     try {
       const response = await axios.post(`http://localhost:3000/wishlist/toggle`, {
         userId,
-         productId:productIds,
-
-      
-      
+        productId,
       });
-  
+
       console.log("Wishlist updated:", response.data);
-  
-      // Update state based on API response
+
       setLikedProducts((prev) => ({
         ...prev,
-        [productIds]: response.data.liked, // Assuming backend returns `{ liked: true/false }`
+        [productId]: response.data.liked, 
       }));
     } catch (error) {
       console.error("Error updating wishlist:", error);
     }
   };
-  
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
